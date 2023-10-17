@@ -1,0 +1,95 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  sam-app
+
+#   Sample SAM Template for sam-app
+
+Globals:
+  Function:
+    Timeout: 3
+    MemorySize: 128
+
+# Resources:
+#   MyAuthFunction:
+#     Type: AWS::Serverless::Function
+#     Properties:
+#       Handler: authorizer.handler
+#       Runtime: nodejs18.x
+#       CodeUri: authorizer/
+
+#   HelloWorldFunction:
+#     Type: AWS::Serverless::Function
+#     Properties:
+      # CodeUri: hello_world/
+      # Handler: app.lambda_handler
+      # Runtime: ruby3.2
+      # Architectures:
+      #   - x86_64
+#       Events:
+#         MyApiEvent:
+#           Type: Api
+#           Properties:
+#             Path: /hello
+#             Method: GET
+#             RestApiId: !Ref MyApi
+#             Auth:
+#               Authorizer: MyLambdaTokenAuthorizer
+
+#   MyApi:
+#     Type: AWS::Serverless::Api
+#     Properties:
+#       StageName: Prod
+#       Auth:
+#         DefaultAuthorizer: MyLambdaTokenAuthorizer
+#         Authorizers:
+#           MyLambdaTokenAuthorizer:
+#             FunctionPayloadType: TOKEN # assuming a token-based authorizer; change as needed
+#             FunctionArn: !GetAtt MyAuthFunction.Arn
+#             Identity:
+#               Headers: ["Authorization"]
+
+# Outputs:
+#   HelloWorldApi:
+#     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+#     Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello"
+
+Resources:
+  MyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Auth:
+        DefaultAuthorizer: MyLambdaRequestAuthorizer
+        Authorizers:
+          MyLambdaRequestAuthorizer:
+            FunctionPayloadType: REQUEST
+            FunctionArn: !GetAtt MyAuthFunction.Arn
+            Identity:
+              Headers:
+                - Authorization
+            AuthorizerPayloadFormatVersion: "2.0"
+            EnableSimpleResponses: true
+
+  MyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./hello_world/
+      Handler: app.lambda_handler
+      Runtime: ruby3.2
+      Architectures:
+        - x86_64
+      Events:
+        GetRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyApi
+            Path: /
+            Method: get
+
+  MyAuthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./authorizer
+      Handler: authorizer.handler
+      Runtime: nodejs18.x

@@ -5,8 +5,10 @@
     type = "github";
     owner = "ninjapanzer";
     repo = "nixpkgs";
-    rev = "c84d406c951a8fc4ea746a683398335aaea86453";
+    rev = "ee8a7accf156e3c1bde14f21f6acfc14ccec133f";
   };
+
+  # inputs.nixpkgs.url = "/home/paulscoder/repos/nixpkgs";
 
   outputs = { self, nixpkgs }:
     let
@@ -18,7 +20,11 @@
     {
       devShells = forEachSupportedSystem ({ pkgs }: {
         default = pkgs.mkShell {
-          packages = with pkgs; [ python3 awscli2 aws-sam-cli ruby_3_2 ];
+          packages = with pkgs; [
+            aws-sam-cli
+            ruby_3_2
+            nodejs_18
+          ];
         };
       });
     };
