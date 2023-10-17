@@ -1,10 +1,10 @@
 var jwt = require('jsonwebtoken');
-
+const key = "qwertyuiopasdfghjklzxcvbnm123456"
 
 exports.handler = async (event) => {
     const authHeader = event.headers['Authorization'];
     try {
-        const decoded = jwt.verify(authHeader, "qwertyuiopasdfghjklzxcvbnm123456")
+        const decoded = jwt.verify(authHeader, key)
         // const decoded = jwt.decode(authHeader);
         if (!decoded) {
             return { "isAuthorized": false }
