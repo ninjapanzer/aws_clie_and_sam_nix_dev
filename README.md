@@ -42,6 +42,10 @@ In the "Signed JSON Web Token" capture the "Key" and replace the `key` variable 
 #### Test
 Take the ke you generated and add it to he Authorization header of a call with curl
 
+You need to provide a could of properties to the authorizer in `sam-app/authroizer/authorizer.js`
+1. key for the claim with your tenant_id -> `tenant_id_key`
+2. key for your auth0 tenant for JWKS resolution -> `auth0_tenant_id` (Could be inferred from the issuer but thats for a different day)
+
 ```curl
 curl http://127.0.0.1:3000 -H "Authorization: <KEY HERE>"
 
